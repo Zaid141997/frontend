@@ -1,9 +1,7 @@
-// Import the necessary dependencies
-import React, { useState, useEffect } from 'react';
-import { Tab, Form, Input, Button, Table, Icon, Modal,Dropdown} from 'semantic-ui-react';
-import axios from 'axios';
+import React, { useState } from 'react';
+import { Tab, Form, Input, Button, Table, Icon, Modal } from 'semantic-ui-react';
 
-const EmployeePage = () => {
+const SkillPage = () => {
   const [primarySkill, setPrimarySkill] = useState({
     skillName: '',
     experience: '',
@@ -20,27 +18,9 @@ const EmployeePage = () => {
   const [secondaryTableData, setSecondaryTableData] = useState([]);
   const [secondarySelectedSkill, setSecondarySelectedSkill] = useState(null);
 
-  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-  const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState(null);
-  const [alertMessage, setAlertMessage] = useState(null);
-  const [skills, setSkills] = useState([]);
-
-  useEffect(() => {
-    fetchSkills(); // Fetch skills on component mount
-  }, []);
-
-  const fetchSkills = async () => {
-    try {
-      const response = await axios.get('http://localhost:3001/skills', {
-        headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        }); // Fetch skills from the backend
-      setSkills(response.data);
-    } catch (error) {
-      console.error('Error fetching skills:', error);
-    }
-  };
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false); // State for delete confirmation modal
+  const [deleteConfirmationIndex, setDeleteConfirmationIndex] = useState(null); // State to track the index of skill to be deleted
+  const [alertMessage, setAlertMessage] = useState(null); // State for displaying alert messages
 
   const handlePrimaryInputChange = (e, { name, value }) => {
     setPrimarySkill({ ...primarySkill, [name]: value });
@@ -57,7 +37,7 @@ const EmployeePage = () => {
 
   const handleSecondarySave = () => {
     if (secondaryTableData.length >= 10) {
-      setAlertMessage('Up to 10 secondary skills can be added.');
+      setAlertMessage('Upto 10 secondary skills can be added.');
       return;
     }
 
@@ -126,25 +106,6 @@ const EmployeePage = () => {
     setDeleteConfirmationIndex(null);
   };
 
-  const handleSaveSkills = async () => {
-    try {
-      const response = await axios.post('http://localhost:3001/employeeskills',{
-        headers: {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        }, {
-        primarySkills: primaryTableData,
-        secondarySkills: secondaryTableData
-      });
-      console.log('Saved employee skills:', response.data);
-      // Clear the skill tables after successful save
-      setPrimaryTableData([]);
-      setSecondaryTableData([]);
-    } catch (error) {
-      console.error('Error saving employee skills:', error);
-    }
-  };
-
   const renderSkillTab = (
     skill,
     handleInputChange,
@@ -157,18 +118,13 @@ const EmployeePage = () => {
   ) => (
     <Tab.Pane>
       <Form>
-        <Form.Group widths="equal">
-        <Form.Dropdown
-              label={<label style={{ fontSize: '20px', marginBottom: '18px' }}>Skill Name</label>}
-              fluid
-              search
-              selection
-              name="skill"
-              placeholder="Select a skill"
-              options={skills.map(skill => ({ key: skill._id, value: skill._id, text: skill.name }))}
-              value={skill.skill}
-              onChange={handleInputChange}
-            />
+        <Form.Group widths="equal"> {/* Set equal width for the form inputs */}
+          <Form.Input
+            name="skillName"
+            placeholder="Skill Name"
+            value={skill.skillName}
+            onChange={handleInputChange}
+          />
           <Form.Input
             name="experience"
             placeholder="Years of Experience"
@@ -227,7 +183,12 @@ const EmployeePage = () => {
           ))}
         </Table.Body>
       </Table>
-      <Modal open={deleteConfirmationOpen} onClose={handleDeleteCancel} size="tiny">
+      {/* Delete Confirmation Modal */}
+      <Modal
+        open={deleteConfirmationOpen}
+        onClose={handleDeleteCancel}
+        size="tiny"
+      >
         <Modal.Header>Confirm Delete</Modal.Header>
         <Modal.Content>
           Are you sure you want to delete this skill?
@@ -241,6 +202,7 @@ const EmployeePage = () => {
           </Button>
         </Modal.Actions>
       </Modal>
+      {/* Alert Message */}
       {alertMessage && (
         <div className="alert">{alertMessage}</div>
       )}
@@ -284,4 +246,4 @@ const EmployeePage = () => {
   );
 };
 
-export default EmployeePage;
+export default SkillPage;
