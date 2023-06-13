@@ -1,9 +1,11 @@
+//front end code
+
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Tab, Segment, Image, Header, Divider } from 'semantic-ui-react';
 
 const PrimarySkillForm = ({ onSave, skillOptions }) => {
   const [primarySkill, setPrimarySkill] = useState({
-    skillName: '',
+    skillId: '', // Change skillName to skillId
     yearsOfExperience: '',
     certification: '',
   });
@@ -13,8 +15,6 @@ const PrimarySkillForm = ({ onSave, skillOptions }) => {
   };
 
   ////
-
-
 
   const handleSave = async () => {
     try {
@@ -31,7 +31,7 @@ const PrimarySkillForm = ({ onSave, skillOptions }) => {
         body: JSON.stringify({
           email,
           primarySkill: {
-            skillName: primarySkill.skillName,
+            skillId: primarySkill.skillId, // Change skillName to skillId
             yearsOfExperience: primarySkill.yearsOfExperience,
             certification: primarySkill.certification,
           },
@@ -56,11 +56,12 @@ const PrimarySkillForm = ({ onSave, skillOptions }) => {
           <Form.Dropdown
             label={<label style={{ fontSize: '20px', marginBottom: '18px' }}>Skill Name</label>}
             placeholder="Skill Name"
-            name="skillName"
+            name="skillId" // Change name to "skillId"
             options={skillOptions}
             search
             selection
-            value={primarySkill.skillName}
+            value={primarySkill.skillId} // Change skillName to skillId
+          
             onChange={handlePrimarySkillChange}
             style={{ fontSize: '20px' }}
             required
@@ -94,7 +95,7 @@ const PrimarySkillForm = ({ onSave, skillOptions }) => {
 
 const SecondarySkillForm = ({ onSave, skillOptions }) => {
   const [secondarySkills, setSecondarySkills] = useState([
-    { skillName: '', yearsOfExperience: '', certification: '' },
+    { skillId: '', yearsOfExperience: '', certification: '' },
   ]);
 
   const handleSecondarySkillChange = (index, name, value) => {
@@ -107,7 +108,7 @@ const SecondarySkillForm = ({ onSave, skillOptions }) => {
     if (secondarySkills.length < 10) {
       setSecondarySkills([
         ...secondarySkills,
-        { skillName: '', yearsOfExperience: '', certification: '' },
+        { skillId: '', yearsOfExperience: '', certification: '' },
       ]);
     }
   };
@@ -134,7 +135,7 @@ const SecondarySkillForm = ({ onSave, skillOptions }) => {
         body: JSON.stringify({
           email,
           secondarySkills: secondarySkills.map((skill) => ({
-            skillName: skill.skillName,
+            skillId: skill.skillId, // Change skillName to skillId
             yearsOfExperience: skill.yearsOfExperience,
             certification: skill.certification,
           })),
@@ -152,25 +153,19 @@ const SecondarySkillForm = ({ onSave, skillOptions }) => {
   };
 
 
-
-
-
-
-
-
-
   const secondarySkillsForm = secondarySkills.map((skill, index) => (
     <Form key={index}>
       <Form.Group widths="equal">
         <Form.Dropdown
           label={<label style={{ fontSize: '20px', marginBottom: '18px' }}>Skill Name</label>}
           placeholder="Skill Name"
-          name="skillName"
+          //name="skillName"
+          name="skillId" // Change name to "skillId"
           options={skillOptions}
           search
           selection
-          value={skill.skillName}
-          onChange={(e, { value }) => handleSecondarySkillChange(index, 'skillName', value)}
+          value={skill.skillId} // Change skillName to skillId
+          onChange={(e, { value }) => handleSecondarySkillChange(index, 'skillId', value)} // Change skillName to skillId
           required
           style={{ fontSize: '20px' }}
         />
@@ -223,12 +218,12 @@ const SecondarySkillForm = ({ onSave, skillOptions }) => {
 const EmployeePage = () => {
   const [skillOptions, setSkillOptions] = useState([]);
   const [primarySkill, setPrimarySkill] = useState({
-    skillName: '',
+    skillId: '', // Change skillName to skillId
     yearsOfExperience: '',
     certification: '',
   });
   const [secondarySkills, setSecondarySkills] = useState([
-    { skillName: '', yearsOfExperience: '', certification: '' },
+    { skillId: '', yearsOfExperience: '', certification: '' },
   ]);
 
 
@@ -241,30 +236,24 @@ const EmployeePage = () => {
 
   const fetchEmployeeSkills = async () => {
     try {
-      const email = localStorage.getItem('email');
-      const response = await fetch(`http://localhost:3001/employeeskills?email=${email}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      const data = await response.json();
+       const email = localStorage.getItem('email');
+       const response = await fetch(`http://localhost:3001/employeeskills?email=${email}`, {
+         headers: {
+           Authorization: `Bearer ${localStorage.getItem('token')}`,
+         },
+       });
+       const data = await response.json();
 
       if (data.primarySkill) {
-        setPrimarySkill(data.primarySkill);
-      }
-      if (data.secondarySkills.length > 0) {
-        setSecondarySkills(data.secondarySkills);
-      }
-    } catch (error) {
-      console.error('Error fetching employee skills:', error);
-    }
-  };
-
-
-
-
-
-
+         setPrimarySkill(data.primarySkill);
+       }
+       if (data.secondarySkills.length > 0) {
+         setSecondarySkills(data.secondarySkills);
+       }
+     } catch (error) {
+       console.error('Error fetching employee skills:', error);
+     }
+   };
 
 
 
@@ -279,7 +268,7 @@ const EmployeePage = () => {
       const skillNames = data.map((skill) => ({
         key: skill._id,
         text: skill.name,
-        value: skill.name,
+        value: skill._id, 
       }));
       setSkillOptions(skillNames);
     } catch (error) {
